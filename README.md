@@ -25,8 +25,8 @@ In each of your repos, add a file called `.pre-commit-config.yaml` with the fol
 
 ```yaml
 repos:
-  - repo: https://github.com/innofactor/pre-commit
-    rev: <VERSION> # Get the latest from: https://github.com/gruntwork-io/pre-commit/releases
+  - repo: https://github.com/innofactororg/pre-commit
+    rev: <VERSION> # Get the latest from: https://github.com/innofactororg/pre-commit/releases
     hooks:
       - id: terraform-fmt
       - id: terraform-validate
@@ -132,7 +132,7 @@ Other shellcheck flags can not be passed through.
 
 ```yaml
 repos:
-  - repo: https://github.com/gruntwork-io/pre-commit
+  - repo: https://github.com/innofactororg/pre-commit
     rev: <VERSION>
     hooks:
       - id: shellcheck
