@@ -1,0 +1,112 @@
+# This configuration file allows our pre-commit hooks to be used with pre-commit: http://pre-commit.com/
+
+- id: terraform-fmt
+  name: Terraform fmt
+  description: Rewrites all Terraform configuration files to a canonical format
+  entry: hooks/terraform-fmt.sh
+  language: script
+  files: \.tf$
+  exclude: \.+.terraform\/.*$
+  require_serial: true
+
+- id: terraform-validate
+  name: Terraform validate
+  description: Validates all Terraform configuration files
+  entry: hooks/terraform-validate.sh
+  language: script
+  files: \.tf$
+  exclude: \.+.terraform\/.*$
+  require_serial: true
+
+- id: packer-validate
+  name: Packer validate
+  description: Validates all Packer configuration files
+  entry: hooks/packer-validate.sh
+  language: script
+  files: (\.pkr\.(hcl|json)|\.pkrvars\.hcl)$
+  require_serial: true
+
+- id: tflint
+  name: tflint
+  description: Linter for Terraform source code
+  entry: hooks/tflint.sh
+  language: script
+  files: \.tf$
+  exclude: \.+.terraform\/.*$
+
+- id: terragrunt-hclfmt
+  name: Terragrunt hclfmt
+  description: Rewrites all Terragrunt configuration files to a canonical format
+  entry: hooks/terragrunt-hclfmt.sh
+  language: script
+  files: \.hcl$
+  exclude: >
+    (?x)^(
+      .+\.terraform\/.*$|
+      .+\.terragrunt-cache\/.*$|
+    )$
+
+- id: shellcheck
+  name: Shellcheck Bash Linter
+  description: Performs linting on bash scripts
+  entry: hooks/shellcheck.sh
+  language: script
+
+- id: gofmt
+  name: gofmt
+  description: Gofmt formats Go programs
+  entry: hooks/gofmt.sh
+  language: script
+  files: \.go$
+  exclude: vendor\/.*$
+
+- id: goimports
+  name: goimports
+  description: Goimports updates imports and formats in the same style as gofmt
+  entry: hooks/goimports.sh
+  language: script
+  files: \.go$
+  exclude: vendor\/.*$
+
+- id: golint
+  name: golint
+  description: Golint is a linter for Go source code
+  entry: hooks/golint.sh
+  language: script
+  files: \.go$
+  exclude: vendor\/.*$
+
+- id: yapf
+  name: yapf
+  description: yapf (Yet Another Python Formatter) is a python formatter from Google
+  entry: hooks/yapf.sh
+  language: script
+  files: \.py$
+  exclude: >
+    (?x)^(
+      \.tox\/.*$|
+      __pycache__\/.*$
+    )$
+
+- id: helmlint
+  name: helmlint
+  description: Run helm lint, a linter for helm charts
+  entry: hooks/helmlint.sh
+  language: script
+  files: \.((ya?ml)|(tpl))$
+  require_serial: true
+
+- id: markdown-link-check
+  name: markdown-link-check
+  description: Run markdown-link-check to check all the relative and absolute links in markdown docs.
+  entry: hooks/mdlink-check.sh
+  language: script
+  files: \.md$
+  exclude: vendor\/.*$
+
+- id: check-terratest-skip-env
+  name: check-terratest-skip-env
+  description: Check all go source files for any uncommented os.Setenv calls setting a terratest SKIP environment.
+  entry: ./hooks/check_skip_env.py
+  language: script
+  files: \.go$
