@@ -9,6 +9,14 @@ export PATH=$PATH:/usr/local/bin
 
 exit_status=0
 enable_list=""
+exclude_list=""
+include_list=""
+severity="info"
+
+if ! command -v shellcheck >/dev/null 2>&1; then
+  echo 'This check needs shellcheck from https://github.com/koalaman/shellcheck'
+  exit 1
+fi
 
 parse_arguments() {
 	while (($# > 0)); do
@@ -18,8 +26,17 @@ parse_arguments() {
 		if [[ "$PARAMETER" == "$VALUE" ]]; then VALUE="$2"; fi
 		shift
 		case "$PARAMETER" in
-		--enable)
+		--enable|-o)
 			enable_list="$enable_list $VALUE"
+			;;
+		--exclude|-e)
+			exclude_list="$exclude_list $VALUE"
+			;;
+		--include|-i)
+			include_list="$include_list $VALUE"
+			;;
+		--severity|-S)
+			severity="$VALUE"
 			;;
 		-*)
 			echo "Error: Unknown option: $PARAMETER" >&2
@@ -30,7 +47,10 @@ parse_arguments() {
 			;;
 		esac
 	done
-	enable_list="${enable_list## }" # remove preceeding space
+	# remove preceeding space
+	enable_list="${enable_list## }"
+	include_list="${include_list## }"
+	exclude_list="${exclude_list## }"
 }
 
 parse_arguments "$@"
@@ -38,7 +58,7 @@ parse_arguments "$@"
 for FILE in $files; do
 	SHEBANG_REGEX='^#!\(/\|/.*/\|/.* \)\(\(ba\|da\|k\|a\)*sh\|bats\)$'
 	if (head -1 "$FILE" | grep "$SHEBANG_REGEX" >/dev/null); then
-		if ! shellcheck ${enable_list:+ --enable="$enable_list"} "$FILE"; then
+		if ! shellcheck ${enable_list:+ --enable="$enable_list"} ${exclude_list:+ --exclude="$exclude_list"} ${include_list:+ --include="$include_list"} --severity="$severity" "$FILE"; then
 			exit_status=1
 		fi
 	elif [[ "$FILE" =~ .+\.(sh|bash|dash|ksh|ash|bats)$ ]]; then
